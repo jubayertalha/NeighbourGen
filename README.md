@@ -1,2 +1,2 @@
 # NeighbourGen
-NeighbourGen is my university Advance Web Technology laravel project. It is a community social media.
+NeighbourGen is my university Advance Web Technology laravel project. It is a community social media to serve the community by creating an extensive chance to communicate between neighbours and community members. An opportunity to know your neighbour, make friends, help others in need, support local businesses, organise events, and so on. Portray your area as the best community. Let the guest know where the best things belong in your area and help them to create a shareable memory. Users are connected through their own area rather than personal connection. Let's go back to the past where we knew every neighbour, where harmony belongs.
