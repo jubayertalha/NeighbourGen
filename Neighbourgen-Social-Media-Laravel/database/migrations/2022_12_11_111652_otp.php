@@ -13,15 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
+        Schema::create('otps', function (Blueprint $table) {
+            $table->integer('otp');
             $table->string('email');
-            $table->string('password');
-            $table->unsignedBigInteger('neighbourhood_id');
-            $table->boolean('verified')->default(false);
-            $table->foreign('neighbourhood_id')->references('id')->on('neighbourhoods');
-            $table->timestamps();
+            $table->dateTime('created_at');
+            $table->boolean('isValid');
+            $table->dateTime('updated_at')->nullable();
         });
     }
 
@@ -32,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('otp');
     }
 };

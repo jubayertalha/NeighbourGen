@@ -6,6 +6,10 @@ use App\Models\User;
 
 use Illuminate\Http\Request;
 use App\Models\Neighbourhood;
+use App\Mail\MyMail;
+use Mail;
+use App\Models\Otp;
+use DateTime;
 
 class AuthController extends Controller
 {
@@ -60,7 +64,21 @@ class AuthController extends Controller
             'password.required'=>'Enter Your Password Please!',
             'email.email'=>'Enter Your Email Please!',
         ]
-    );
+        );
+        $otp = rand(100000, 999999);
+        $data = new Otp();
+        $data->otp = $otp;
+        $data->email = $request->email;
+        $data->created_at = new DateTime();
+        $data->isValid = false;
+        $data->save();
+        
+        $emailAddress = $request->email;
+        $details = [
+            'tittle' => 'Email Verification',
+            'OTP' => $otp,
+        ];
+        Mail::to($emailAddress)->send(new MyMail($details));
         $user = new User();
         $user->name = $request->name;
         $user->password = $request->password;
@@ -68,7 +86,22 @@ class AuthController extends Controller
         $user->neighbourhood_id = $request->neighbourhood;
         $user->save();
         $request->session()->put('user', $user->id);
-        return redirect()->route('home');
+        return view('pages.mail.otp');  
+    }
+
+    public function otpCheckSubmit(Request $request){
+        $otp = $request->input('otp');
+        $currentTime = new DateTime();
+        $data = Otp::where('otp', $otp)->where('isValid', false)->first();
+        $expired_at = $data->expired_at;
+
+        if($data){
+            User::where('email', $data->email)->update(['verified' => true]);
+            Otp::where('otp', $data->otp)->update(['isValid' => true]);
+            return redirect()->route('home');
+        }
+        return "Otp Invalid";
+
     }
 
     public function logout(){

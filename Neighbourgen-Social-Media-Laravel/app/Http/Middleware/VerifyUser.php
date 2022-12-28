@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Token;
 
 class VerifyUser
 {
@@ -17,11 +18,13 @@ class VerifyUser
      */
     public function handle(Request $request, Closure $next)
     {
+        $header = $request->header('Authorization');
+        $token = Token::where('isValid', true)->where('token', $header)->first();
         $user = new User();
-        $user = User::where('id', session()->get('user'))->first();
-        if($user){
+        $user = User::where('verified', true)->where('id', $token->user_id)->first();
+        if($user && $token){
             return $next($request);
         }
-        return redirect()->route('login');
+        return response()->json('User not verified');
     }
 }
